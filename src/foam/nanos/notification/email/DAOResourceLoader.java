@@ -37,6 +37,7 @@ public class DAOResourceLoader
     DAO groupDAO = (DAO) x.get("groupDAO");
     DAO emailTemplateDAO = (DAO) x.get("localEmailTemplateDAO");
 
+    //wrong test
     /*
     TODO:
     name  group locale spid
