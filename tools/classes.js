@@ -933,7 +933,9 @@ var classes = [
   // Notification
   'foam.nanos.crunch.TopLevelCapabilityStatusUpdateNotification',
 
-  'foam.counter.Counter'
+  'foam.counter.Counter',
+
+  'foam.nanos.notification.email.EmailRule'
 ];
 
 var abstractClasses = [
