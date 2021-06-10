@@ -1086,3 +1086,29 @@ p({
     }
   """
 })
+
+p({
+  "class":"foam.nanos.boot.NSpec",
+  "name":"emailRuleDAO",
+  "description": "A DAO that stores email service",
+  "lazy":false,
+  "serve":true,
+  "authenticate": true,
+  "serviceScript":"""
+    import foam.dao.DAO;
+    return new foam.dao.EasyDAO.Builder(x)
+      .setPm(true)
+      .setAuthorize(false)
+      .setOf(foam.nanos.notification.email.EmailRule.getOwnClassInfo())
+      .setJournalType(foam.dao.JournalType.SINGLE_JOURNAL)
+      .setJournalName("emailRules")
+      .build();
+  """,
+  "client":
+  """
+    {
+      \"of\":\"foam.nanos.notification.email.EmailRule\"
+    }
+  """
+})
+
