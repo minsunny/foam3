@@ -8,7 +8,7 @@ foam.CLASS({
   package: 'foam.nanos.auth',
   name: 'UserPropertyAvailabilityService',
 
-  documentation: 
+  documentation:
     `This is a service that checks whether a user with matching values for a unique given property
     (restricted use for Username and Email) already exists in the system. Thus, this service allows the client to check
     the availability of these property values.
@@ -41,12 +41,12 @@ foam.CLASS({
         }
 
         ArraySink select = (ArraySink) userDAO.inX(x).where(MLang.EQ(targetProperty.equals("userName") ? User.USER_NAME : User.EMAIL, value)).select(new ArraySink());
-        
+
         if ( select.getArray().size() != 0 ) {
           return false;
         }
         return true;
       `
-    }  
+    }
   ]
 });
