@@ -19,11 +19,17 @@
     'foam.nanos.auth.LastModifiedByAware',
     'foam.nanos.approval.ApprovableAware',
     'foam.nanos.auth.ServiceProviderAware'
+    //'foam.nanos.ruler.EmailRuleAction'
   ],
 
   imports: [
+    'emailTemplateDAO',
     'userDAO?'
   ],
+
+  requires: [
+    'foam.nanos.notification.email.EmailTemplate'
+   ],
 
   javaImports: [
     'foam.core.DirectAgency',
@@ -300,6 +306,37 @@
       name: 'spid',
       value: foam.nanos.auth.ServiceProviderAware.GLOBAL_SPID,
       documentation: 'Service Provider Id of the rule. Default to ServiceProviderAware.GLOBAL_SPID for rule applicable to all service providers.'
+    },
+    {
+      class: 'StringArray',
+      name: 'labels',
+      documentation: 'categorical labels',
+      section: 'basicInfo'
+    },
+    {
+      class: 'FObjectProperty',
+      of: 'foam.mlang.predicate.Predicate',
+      name: 'spidPredicate',
+      section: 'basicInfo'
+    },
+    {
+      class: 'StringArray',
+      name: 'emailTemplateName',
+      section: 'basicInfo',
+      hidden: true
+    },
+    {
+      class: 'Reference',
+      of: 'foam.nanos.notification.email.EmailTemplate',
+      name: 'emailTemplate',
+      section: 'basicInfo',
+      visibility: 'RO',
+      expression: function(emailTemplateName) {
+        if ( ! emailTemplateName || emailTemplateName == '' ) return foam.dao.NullDAO.create();
+
+        return this.emailTemplateDAO.where(this.CONTAINS_IC(this.EmailTemplate.NAME, emailTemplateName));
+      },
+      view: 'foam.u2.view.ScrollTableView'
     }
   ],
 
@@ -503,6 +540,29 @@
           return listRule.stream().filter(rule -> passedId.equals(rule.getId())).findFirst().orElse(null);
         }
         `);
+      }
+    },
+    {
+      class: 'foam.comics.v2.CannedQuery',
+      label: 'emailNotification',
+      predicateFactory: function(e) {
+        //return e.CONTAINS_IC(foam.nanos.ruler.Rule.LABELS,'email');
+        return e.AND(
+          e.CONTAINS_IC(foam.nanos.ruler.Rule.LABELS,'email'),
+          e.OR(
+            e.EQ(
+              foam.nanos.ruler.Rule.spidPredicate,
+              0
+            )
+          )
+        );
+      }
+    },
+    {
+      class: 'foam.comics.v2.CannedQuery',
+      label: 'notification',
+      predicateFactory: function(e) {
+        return e.CONTAINS_IC(foam.nanos.ruler.Rule.LABELS,'notification');
       }
     }
   ]

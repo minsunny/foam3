@@ -41,7 +41,9 @@ p({
   "daoKey":"userCapabilityJunctionDAO",
   "operation":3,
   "after":true,
-  "enabled":false,
+  "enabled":true,
+  "emailTemplateName": ["top-level-capability-status-update"],
+  "labels": ["email", "notification"],
   "predicate":{"class":"foam.nanos.crunch.IsUserCapabilityJunctionStatusUpdate","includeRenewalStatus":false},
   "action":{"class":"foam.nanos.crunch.SendNotificationOnTopLevelCapabilityStatusUpdate"},
   "lifecycleState":1
