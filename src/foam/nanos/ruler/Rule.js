@@ -19,11 +19,11 @@
     'foam.nanos.auth.LastModifiedByAware',
     'foam.nanos.approval.ApprovableAware',
     'foam.nanos.auth.ServiceProviderAware'
-    //'foam.nanos.ruler.EmailRuleAction'
   ],
 
   imports: [
     'emailTemplateDAO',
+    'subject',
     'userDAO?'
   ],
 
@@ -305,7 +305,7 @@
       of: 'foam.nanos.auth.ServiceProvider',
       name: 'spid',
       value: foam.nanos.auth.ServiceProviderAware.GLOBAL_SPID,
-      documentation: 'Service Provider Id of the rule. Default to ServiceProviderAware.GLOBAL_SPID for rule applicable to all service providers.'
+      documentation: 'Service Provider Id of the rule. Default to ServiceProviderAware.GLOBAL_SP(iID for rule applicable to all service providers.'
     },
     {
       class: 'StringArray',
@@ -337,6 +337,14 @@
         return this.emailTemplateDAO.where(this.CONTAINS_IC(this.EmailTemplate.NAME, emailTemplateName));
       },
       view: 'foam.u2.view.ScrollTableView'
+    },
+    {
+      class: 'String',
+      name: 'userSpid',
+      section: 'basicInfo',
+      factory: function() {
+        return this.subject.user.spid;
+      }
     }
   ],
 
@@ -544,17 +552,17 @@
     },
     {
       class: 'foam.comics.v2.CannedQuery',
+      label: 'All',
+      predicateFactory: function(e) {
+        return e.TRUE;
+      }
+    },
+    {
+      class: 'foam.comics.v2.CannedQuery',
       label: 'emailNotification',
       predicateFactory: function(e) {
-        //return e.CONTAINS_IC(foam.nanos.ruler.Rule.LABELS,'email');
         return e.AND(
-          e.CONTAINS_IC(foam.nanos.ruler.Rule.LABELS,'email'),
-          e.OR(
-            e.EQ(
-              foam.nanos.ruler.Rule.spidPredicate,
-              0
-            )
-          )
+          e.CONTAINS_IC(foam.nanos.ruler.Rule.LABELS, 'email')
         );
       }
     },
@@ -562,7 +570,17 @@
       class: 'foam.comics.v2.CannedQuery',
       label: 'notification',
       predicateFactory: function(e) {
-        return e.CONTAINS_IC(foam.nanos.ruler.Rule.LABELS,'notification');
+        return e.CONTAINS_IC(foam.nanos.ruler.Rule.LABELS, 'notification');
+      }
+    },
+    {
+      class: 'foam.comics.v2.CannedQuery',
+      label: 'spid',
+      predicateFactory: function(e) {
+        return  e.OR(
+          e.EQ(foam.nanos.ruler.Rule.SPID, '*'),
+          e.EQ(foam.nanos.ruler.Rule.SPID, foam.nanos.ruler.Rule.USER_SPID)
+        );
       }
     }
   ]
